@@ -17,7 +17,7 @@ describe('audioToMorse tests', () => {
       fileName,
     });
     // eslint-disable-next-line no-console
-    console.log(morse);
+    // console.log(morse);
     expect(typeof morse).toStrictEqual('string');
     // NOTE: actual result could be shown and tested here but is not
     // as it would reveal secret message.

@@ -24,11 +24,11 @@ type MorseSequenceCharacter = 'cb' | 'wb' | 'dih' | 'dah' | '-';
 
 // initial parameters
 let params: IAudioToMorseParams = {
-  maxRoundsToZero: 0.05,
-  sampleLengthMs: 10,
-  morseDihMaxPercentageOfDah: 45,
-  smallBreakPercentageOfWordBreak: 20,
-  charBreakPercentageOfWordBreak: 50,
+  maxRoundsToZero: 0.05, // if value is less than this, it is considered silence
+  sampleLengthMs: 10, // sample length in milliseconds
+  morseDihMaxPercentageOfDah: 45, // dih must be less than 45% of length of dah
+  smallBreakPercentageOfWordBreak: 20, // small break must be less than 20% of word break
+  charBreakPercentageOfWordBreak: 50, // char break must be less than 50% of word break
 };
 
 // internal functions
@@ -71,7 +71,8 @@ function deductMorse(
     return 'wb';
   }
   // dih or dah
-  return (va.amount / maxDahValue) < params.morseDihMaxPercentageOfDah / 100 ? 'dih' : 'dah';
+  return (va.amount / maxDahValue) < params.morseDihMaxPercentageOfDah / 100
+    ? 'dih' : 'dah';
 }
 
 function toMorse(seq: IValueAmount[]) {
@@ -110,7 +111,7 @@ function morseToChar(code: string):string {
  * Handle Morse sequence and decode the message.
  *
  * @param {MorseSequenceCharacter[]} arr
- * @return {*}  {string}
+ * @return {string} Decoded message
  */
 function toPlainText(arr: MorseSequenceCharacter[]):string {
   const initial = {
@@ -202,7 +203,7 @@ const valueAmountReducer = (
  *
  * @export
  * @param {IProcessFileParams} processParams
- * @return {*}  {Promise<string>}
+ * @return {Promise<string>}
  */
 export async function processFile(processParams: IProcessFileParams): Promise<string> {
   params = processParams.params;
@@ -232,7 +233,7 @@ export async function processFile(processParams: IProcessFileParams): Promise<st
   // dividing by block size
   const filteredData = blockData.all.reduce((acc, curr) => {
     const sum = curr.reduce((acc2, curr2) => acc2 + Math.abs(curr2), 0);
-    acc.push(sum / blockSize); // divide the sum by the block size to get the average
+    acc.push(sum / blockSize);
     return acc;
   }, []);
   // normalize samples to be between 0 and 1
@@ -247,6 +248,8 @@ export async function processFile(processParams: IProcessFileParams): Promise<st
     // to make sequence shorter so we can use amount to detect
     // what kind of break or code that item is
     .reduce(valueAmountReducer, [] as IValueAmount[]);
+  // convert sequence of dih and dah's into morse code
   const morse = toMorse(sequence);
+  // convert morse code into text
   return toPlainText(morse);
 }

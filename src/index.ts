@@ -3,13 +3,16 @@ import { processFile } from './audioToMorse';
 import { IAudioToMorseParams } from './types/sharedTypes';
 
 const params: IAudioToMorseParams = {
-  maxRoundsToZero: 0.05,
-  sampleLengthMs: 10,
-  morseDihMaxPercentageOfDah: 45,
-  smallBreakPercentageOfWordBreak: 20,
-  charBreakPercentageOfWordBreak: 50,
+  maxRoundsToZero: 0.05, // if value is less than this, it is considered silence
+  sampleLengthMs: 10, // sample length in milliseconds
+  morseDihMaxPercentageOfDah: 45, // dih must be less than 45% of length of dah
+  smallBreakPercentageOfWordBreak: 20, // small break must be less than 20% of word break
+  charBreakPercentageOfWordBreak: 50, // char break must be less than 50% of word break
 };
 
+/**
+ * Main function
+ */
 function main() {
   const args = process.argv.slice(2);
   if (args.length !== 1) {
