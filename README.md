@@ -1,6 +1,8 @@
 # wav-to-morse
 Finds Morse code inside of WAV file and prints it.
 
+NOTE: If no Morse code like sounds are found, empty string is returned.
+
 <div align="center">
   <kbd>
     <img src="./assets/screenshot.png" />

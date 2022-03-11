@@ -4,6 +4,8 @@ export interface IAudioToMorseParams {
   morseDihMaxPercentageOfDah: number;
   smallBreakPercentageOfWordBreak: number;
   charBreakPercentageOfWordBreak: number;
+  soundMinDuration: number;
+  soundMaxDuration: number;
 }
 
 export interface IProcessFileParams {
